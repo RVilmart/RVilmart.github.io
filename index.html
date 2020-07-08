@@ -72,7 +72,7 @@ My CV can be found <a href="ressources/CV.pdf">here</a>.
 	</div>
 
     <div class="row" style="margin-top: 120px; margin-right: 20px; margin-left: 20px;">
-  		<div class="col-md-3"><canvas id="graph1" width="400" height="480" /></div>
+  		<div class="col-md-3"><canvas id="graph1" width="450" height="480" /></div>
   		<div class="col-md-6">
   			<h1>Research</h1>
         <p class="lead">
@@ -81,7 +81,7 @@ The ZX-Calculus comes equipped with a set of graphical transformations that are 
 You can find a list of my publications <a href="publis.html">here</a>. This <a href="https://hal.archives-ouvertes.fr/hal-01963426">one</a> got me the <a href="https://lics.siglog.org/archive/kleene-award.html">Kleene award</a> for best student paper at the conference LiCS (Logics in Computer Science).
         </p>
   		</div>
-  		<div class="col-md-3"><canvas id="graph2" width="400" height="480" /></div>
+  		<div class="col-md-3"><canvas id="graph2" width="450" height="480" /></div>
 	</div>
 
     <div class="row" style="margin-top: 120px; margin-bottom: 120px; margin-right: 20px; margin-left: 20px;">
@@ -167,6 +167,9 @@ Rue Noetzlin, 91190 Gif-sur-Yvette
 	graph2.newEdge(v72,b12);
 
 	jQuery(function(){
+	  $('#graph1').width($('.col-md-3').width());
+	  $('#graph2').width($('.col-md-3').width());
+
 	  var springy = window.springy = jQuery('#graph1').springy({
 	    graph: graph,
 	    nodeSelected: function(node){
@@ -179,7 +182,14 @@ Rue Noetzlin, 91190 Gif-sur-Yvette
 	      console.log('Node selected: ' + JSON.stringify(node.data));
 	    }
 	  });
+	  console.log($('.col-md-3').width())
 	});
+
+	$(window).resize(function(){
+	  $('#graph1').width($('.col-md-3').width());
+	  $('#graph2').width($('.col-md-3').width());
+	});
+
 	</script>
   </body>
 </html>
