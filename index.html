@@ -48,13 +48,13 @@
       </div>
     </nav>
 
-    <div class="row" style="margin-top: 100px; margin-right: 20px; margin-left: 20px;">
+    <!--<div class="row" style="margin-top: 100px; margin-right: 20px; margin-left: 20px;">
   		<div class="col-md-3"></div>
   		<div class="col-md-6">
   			<h1 style="color:red;">Site under construction.</h1>
   		</div>
   		<div class="col-md-3"></div>
-	</div>
+	</div>-->
 
     <div class="row" style="margin-top: 100px; margin-right: 20px; margin-left: 20px;">
   		<div class="col-md-2"></div>
@@ -72,16 +72,16 @@ My CV can be found <a href="ressources/CV.pdf">here</a>.
 	</div>
 
     <div class="row" style="margin-top: 120px; margin-right: 20px; margin-left: 20px;">
-  		<div class="col-md-3"></div>
+  		<div class="col-md-3"><canvas id="graph1" width="400" height="480" /></div>
   		<div class="col-md-6">
   			<h1>Research</h1>
         <p class="lead">
         	My primary focus is the development of the ZX-Calculus, a graphical language for quantum computing, stemming from category theory. In this formalism, quantum processes are expressed in a graphical fashion, in a way akin to boolean circuits. The language is at the same time very intuitive, and unifies other models for quantum computing such as quantum circuits and measurement calculus.</br>
 The ZX-Calculus comes equipped with a set of graphical transformations that are allowed as they do not change the overall quantum operator that is represented. During my Ph.D., I tackled the problem of completeness of the language: knowing whether there were enough transformations to completely capture quantum mechanics.</br>
-You can find a list of my publications <a href="">here</a>. This <a href="https://hal.archives-ouvertes.fr/hal-01963426">one</a> got me the <a href="https://lics.siglog.org/archive/kleene-award.html">Kleene award</a> for best student paper at the conference LiCS (Logics in Computer Science).
+You can find a list of my publications <a href="publis.html">here</a>. This <a href="https://hal.archives-ouvertes.fr/hal-01963426">one</a> got me the <a href="https://lics.siglog.org/archive/kleene-award.html">Kleene award</a> for best student paper at the conference LiCS (Logics in Computer Science).
         </p>
   		</div>
-  		<div class="col-md-3"></div>
+  		<div class="col-md-3"><canvas id="graph2" width="400" height="480" /></div>
 	</div>
 
     <div class="row" style="margin-top: 120px; margin-bottom: 120px; margin-right: 20px; margin-left: 20px;">
@@ -107,5 +107,79 @@ Rue Noetzlin, 91190 Gif-sur-Yvette
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="js/bootstrap.min.js"></script>
+	<script src="ressources/dhotson-springy-9654b64/springy.js"></script>
+	<script src="ressources/dhotson-springy-9654b64/springyui.js"></script>
+	<script>
+	var graph = new Springy.Graph();
+
+	var b0 = graph.newNode({label:'', type:'b'});
+	var v0 = graph.newNode({label:'', type:'Z'});
+	var v1 = graph.newNode({label:'', type:'X'});
+	var v2 = graph.newNode({label:'π/4', type:'Z'});
+	var v3 = graph.newNode({label:'π/4', type:'Z'});
+	var v4 = graph.newNode({label:'', type:'X'});
+	var v5 = graph.newNode({label:'π/4', type:'Z'});
+	var v6 = graph.newNode({label:'-π/2', type:'Z'});
+	var v7 = graph.newNode({label:'', type:'X'});
+	var v8 = graph.newNode({label:'π/4', type:'Z'});
+	var v9 = graph.newNode({label:'', type:'Z'});
+	var v10 = graph.newNode({label:'', type:'X'});
+	var v11 = graph.newNode({label:'π/4', type:'Z'});
+	var v12 = graph.newNode({label:'π/4', type:'Z'});
+	var b1 = graph.newNode({label:'', type:'b'});
+
+	graph.newEdge(b0,v0);
+	graph.newEdge(v0,v1);
+	graph.newEdge(v2,v1);
+	graph.newEdge(v3,v1);
+	graph.newEdge(v0,v4);
+	graph.newEdge(v5,v4);
+	graph.newEdge(v6,v4);
+	graph.newEdge(v6,v7);
+	graph.newEdge(v8,v7);
+	graph.newEdge(v9,v7);
+	graph.newEdge(v9,v10);
+	graph.newEdge(v11,v10);
+	graph.newEdge(v12,v10);
+	graph.newEdge(v9,b1);
+
+	var graph2 = new Springy.Graph();
+
+	var b02 = graph2.newNode({label:'', type:'b'});
+	var v02 = graph2.newNode({label:'', type:'Z'});
+	var v12 = graph2.newNode({label:'π', type:'X'});
+	var v22 = graph2.newNode({label:'π/4', type:'Z'});
+	var v32 = graph2.newNode({label:'π/4', type:'Z'});
+	var v42 = graph2.newNode({label:'π', type:'X'});
+	var v52 = graph2.newNode({label:'π/4', type:'Z'});
+	var v62 = graph2.newNode({label:'π/4', type:'Z'});
+	var v72 = graph2.newNode({label:'π/2', type:'X'});
+	var b12 = graph2.newNode({label:'', type:'b'});
+
+	graph2.newEdge(b02,v02);
+	graph2.newEdge(v02,v12);
+	graph2.newEdge(v22,v12);
+	graph2.newEdge(v32,v12);
+	graph2.newEdge(v02,v42);
+	graph2.newEdge(v52,v42);
+	graph2.newEdge(v62,v42);
+	graph2.newEdge(v62,v72);
+	graph2.newEdge(v72,b12);
+
+	jQuery(function(){
+	  var springy = window.springy = jQuery('#graph1').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    }
+	  });
+	  var springy = window.springy = jQuery('#graph2').springy({
+	    graph: graph2,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    }
+	  });
+	});
+	</script>
   </body>
 </html>
