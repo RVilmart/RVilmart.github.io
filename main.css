@@ -1,0 +1,14 @@
+body {
+  padding-top: 50px;
+  font-family: serif;
+}
+h1 {
+  color: #337ab7;
+  font-size: 4em;
+}
+nav {
+	font-size: 1.5em;
+}
+.navbar-brand {
+	font-size: 1.1em;
+}
