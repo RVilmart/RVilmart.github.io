@@ -100,6 +100,12 @@ Rue Noetzlin, 91190 Gif-sur-Yvette
   		<div class="col-md-4"></div>
 	</div>
 
+	<button onclick="topFunction()" id="topBtn" title="Go to top"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></button> 
+
+	<div class="footer">
+	  <p>Website created by Renaud Vilmart / diagrams displayed using Springy v2.7.1 2010-2013 by Dennis Hotson </p>
+	</div>
+
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -110,6 +116,27 @@ Rue Noetzlin, 91190 Gif-sur-Yvette
 	<script src="ressources/dhotson-springy-9654b64/springy.js"></script>
 	<script src="ressources/dhotson-springy-9654b64/springyui.js"></script>
 	<script>
+	//Get the button:
+	mybutton = document.getElementById("topBtn");
+
+	// When the user scrolls down 20px from the top of the document, show the button
+	window.onscroll = function() {scrollFunction()};
+
+	function scrollFunction() {
+	  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+	    mybutton.style.display = "block";
+	  } else {
+	    mybutton.style.display = "none";
+	  }
+	}
+
+	// When the user clicks on the button, scroll to the top of the document
+	function topFunction() {
+	  $("html, body").animate({ scrollTop: "0" }); 
+	  /*document.body.scrollTop = 0; // For Safari
+	  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera*/
+	} 
+
 	var graph = new Springy.Graph();
 
 	var b0 = graph.newNode({label:'', type:'b'});

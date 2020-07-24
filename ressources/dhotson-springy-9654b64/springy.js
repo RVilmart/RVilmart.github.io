@@ -568,7 +568,7 @@
 			}
 		});
 
-		var padding = topright.subtract(bottomleft).multiply(0.07); // ~5% padding
+		var padding = topright.subtract(bottomleft).multiply(0.11); // ~5% padding at 0.07
 
 		return {bottomleft: bottomleft.subtract(padding), topright: topright.add(padding)};
 	};
