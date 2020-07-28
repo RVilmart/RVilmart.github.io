@@ -48,16 +48,52 @@
       </div>
     </nav>
 
-    <div class="row" style="margin-top: 50px; margin-right: 20px; margin-left: 20px;">
-  		<div class="col-md-3"></div>
-  		<div class="col-md-6">
+    <div class="row" style="margin-top: 50px; margin-right: 0px; margin-left: 0px;">
+      <div class="col-md-3">
+      </div>
+      <div class="col-md-6" style="margin-left:0px;padding-left: 0px;">
         <h1>Publications</h1>
+      </div>
+      <div class="col-md-3"></div>
+    </div>
+
+    <div class="row" style="margin-top: 10px; margin-right: 0px; margin-left: 0px;">
+      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-1 col-xs-1" style="height:50px;background: -webkit-radial-gradient(100% 100%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
+      </div>
+      <div class="col-md-6 col-xs-10" style="height:50px;background: -webkit-linear-gradient( bottom, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
+      </div>
+      <div class="col-md-1 col-xs-1" style="height:50px;background: -webkit-radial-gradient(0% 100%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;"></div>
+      <div class="col-md-2 col-xs-0"></div>
+    </div>
+
+    <div class="row" style="margin-top: 0px; margin-right: 0px; margin-left: 0px;">
+      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-1 col-xs-1" id="left-col" style="height:2000px;background: -webkit-linear-gradient( right, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
+        <!--<p  style="
+  -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0));
+  -webkit-mask-size: 100% 50%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: left top, left bottom;">test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test</p>-->
+      </div>
+      <div class="col-md-6 col-xs-10" id="mid-col" style="height:2000px;margin-left:0px;padding-left: 0px;margin-right:0px;padding-right: 0px;background-color: white;">
         <!--<object type="text/html" data="https://haltools.inria.fr/Public/afficheRequetePubli.php?CB_ref_biblio=oui&Fen=Aff&css=../css/VisuRubriqueEncadre.css&idHal=rvilmart&langue=Anglais&ordre_aff=TA&tri_exp=annee_publi&tri_exp2=typdoc&tri_exp3=date_publi" width="100%" height="100%" style="overflow:hidden;"></object>-->
-        <iframe width="100%" height="2000" style="border:0px;margin-top: 50px" src="https://haltools.inria.fr/Public/afficheRequetePubli.php?CB_ref_biblio=oui&Fen=Aff&css=https://rvilmart.github.io/publis-encadre.css&idHal=rvilmart&langue=Anglais&ordre_aff=TA&tri_exp=annee_publi&tri_exp2=typdoc&tri_exp3=date_publi" title="Hal's automatically generated list of publications" scrolling="auto" >
+        <iframe id="publis-iframe" width="100%" style="height:2000px;border:0px;margin-left:0px;margin-right:0px;" src="https://haltools.inria.fr/Public/afficheRequetePubli.php?CB_ref_biblio=oui&Fen=Aff&css=https://rvilmart.github.io/publis-encadre.css&idHal=rvilmart&langue=Anglais&ordre_aff=TA&tri_exp=annee_publi&tri_exp2=typdoc&tri_exp3=date_publi" title="Hal's automatically generated list of publications" scrolling="auto" >
         </iframe>
-  		</div>
-  		<div class="col-md-3"></div>
-	  </div>
+      </div>
+      <div class="col-md-1 col-xs-1" id="right-col" style="height:2000px;background: -webkit-linear-gradient( left, rgba(255,255,255,1), rgba(0,0,0,0) );margin-left:0px;"></div>
+      <div class="col-md-2 col-xs-0"></div>
+    </div>
+
+    <div class="row" style="margin-top: 0px; margin-right: 0px; margin-left: 0px;">
+      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-1 col-xs-1" style="height:50px;background: -webkit-radial-gradient(100% 0%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
+      </div>
+      <div class="col-md-6 col-xs-10" style="height:50px;background: -webkit-linear-gradient( top, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
+      </div>
+      <div class="col-md-1 col-xs-1" style="height:50px;background: -webkit-radial-gradient(0% 0%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;"></div>
+      <div class="col-md-2 col-xs-0"></div>
+    </div>
 
   <button onclick="topFunction()" id="topBtn" title="Go to top"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></button> 
 
@@ -92,6 +128,19 @@
       /*document.body.scrollTop = 0; // For Safari
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera*/
       } 
+    </script>
+    <script type="text/javascript">
+      function adapt(){
+        h = $(window).height()-350;
+        $("#publis-iframe").css({"height":h});
+        $("#left-col").css({"height":h});
+        $("#mid-col").css({"height":h});
+        $("#right-col").css({"height":h});
+      }
+      adapt();
+      $(window).on('resize', function(){
+        adapt();
+      });
     </script>
   </body>
 </html>

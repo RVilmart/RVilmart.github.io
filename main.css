@@ -1,6 +1,10 @@
 body {
   padding-top: 50px;
+  background-color: #F2F2F2;
   font-family: serif;
+  background-image: url('ressources/fond4.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 h1 {
   color: #337ab7;
