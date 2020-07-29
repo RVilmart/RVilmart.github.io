@@ -35,7 +35,8 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand">Renaud Vilmart</a>
+          <a class="navbar-brand hidden-sm" href="index.html">Renaud Vilmart</a>
+          <a class="navbar-brand visible-sm-inline" href="index.html">R. Vilmart</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -48,22 +49,22 @@
       </div>
     </nav>
 
-    <div class="row" style="margin-top: 50px; margin-right: 0px; margin-left: 0px;">
+    <!--<div class="row" id="title-row" style="margin-top: 50px; margin-right: 0px; margin-left: 0px;">
       <div class="col-md-3">
       </div>
       <div class="col-md-6" style="margin-left:0px;padding-left: 0px;">
-        <h1>Publications</h1>
+        <h1 id="title">Publications</h1>
       </div>
       <div class="col-md-3"></div>
-    </div>
+    </div>-->
 
-    <div class="row" style="margin-top: 10px; margin-right: 0px; margin-left: 0px;">
+    <div class="row" id="first-gradient" style="margin-top: 30px; margin-right: 0px; margin-left: 0px;">
       <div class="col-md-2 col-xs-0"></div>
-      <div class="col-md-1 col-xs-1" style="height:50px;background: -webkit-radial-gradient(100% 100%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
+      <div class="col-md-1 col-xs-1" id="first-gradient-l" style="height:130px;background: -webkit-radial-gradient(100% 100%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
       </div>
-      <div class="col-md-6 col-xs-10" style="height:50px;background: -webkit-linear-gradient( bottom, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
+      <div class="col-md-6 col-xs-10" id="first-gradient-m" style="height:130px;background: -webkit-linear-gradient( bottom, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;"><h1>Publications</h1>
       </div>
-      <div class="col-md-1 col-xs-1" style="height:50px;background: -webkit-radial-gradient(0% 100%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;"></div>
+      <div class="col-md-1 col-xs-1" id="first-gradient-r" style="height:130px;background: -webkit-radial-gradient(0% 100%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;"></div>
       <div class="col-md-2 col-xs-0"></div>
     </div>
 
@@ -130,8 +131,34 @@
       } 
     </script>
     <script type="text/javascript">
+      //console.log($("#title").css());
+      var small = false;
+
       function adapt(){
-        h = $(window).height()-350;
+        var h = $(window).height();
+        if(h>=550 && small){
+          $("#first-gradient").css({"margin-top":30});
+          $("#first-gradient-r,#first-gradient-m,#first-gradient-l").css({"height":130});
+          //$("#title").css({"font-size":"large"});
+          var p = $("h2:first");
+          var a = $("<h1></h1>").append(p.contents());
+          p.replaceWith(a);
+          small = false;
+        }
+        if(h<550 && !small){
+          $("#first-gradient").css({"margin-top":10});
+          $("#first-gradient-r,#first-gradient-m,#first-gradient-l").css({"height":80});
+          //$("#title").css({"font-size":"large"});
+          var p = $("h1:first");
+          var a = $("<h2></h2>").append(p.contents());
+          p.replaceWith(a);
+          small = true;
+        }
+        if(small){
+          h = h-200;
+        }else{
+          h = h-300;
+        }
         $("#publis-iframe").css({"height":h});
         $("#left-col").css({"height":h});
         $("#mid-col").css({"height":h});
