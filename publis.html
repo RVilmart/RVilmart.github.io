@@ -59,17 +59,17 @@
     </div>-->
 
     <div class="row" id="first-gradient" style="margin-top: 30px; margin-right: 0px; margin-left: 0px;">
-      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-2 col-xs-0 hidden-xs hidden-sm"></div>
       <div class="col-md-1 col-xs-1" id="first-gradient-l" style="height:130px;background: -webkit-radial-gradient(100% 100%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
       </div>
-      <div class="col-md-6 col-xs-10" id="first-gradient-m" style="height:130px;background: -webkit-linear-gradient( bottom, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;"><h1>Publications</h1>
+      <div class="col-md-6 col-xs-10" id="first-gradient-m" style="height:130px;background: -webkit-linear-gradient( bottom, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;margin-left:0px;padding-left:0px;"><h1>Publications</h1>
       </div>
       <div class="col-md-1 col-xs-1" id="first-gradient-r" style="height:130px;background: -webkit-radial-gradient(0% 100%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;"></div>
-      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-2 col-xs-0 hidden-xs hidden-sm"></div>
     </div>
 
     <div class="row" style="margin-top: 0px; margin-right: 0px; margin-left: 0px;">
-      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-2 col-xs-0 hidden-xs hidden-sm"></div>
       <div class="col-md-1 col-xs-1" id="left-col" style="height:2000px;background: -webkit-linear-gradient( right, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
         <!--<p  style="
   -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0));
@@ -83,17 +83,17 @@
         </iframe>
       </div>
       <div class="col-md-1 col-xs-1" id="right-col" style="height:2000px;background: -webkit-linear-gradient( left, rgba(255,255,255,1), rgba(0,0,0,0) );margin-left:0px;"></div>
-      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-2 col-xs-0 hidden-xs hidden-sm"></div>
     </div>
 
     <div class="row" style="margin-top: 0px; margin-right: 0px; margin-left: 0px;">
-      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-2 col-xs-0 hidden-xs hidden-sm"></div>
       <div class="col-md-1 col-xs-1" style="height:50px;background: -webkit-radial-gradient(100% 0%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
       </div>
       <div class="col-md-6 col-xs-10" style="height:50px;background: -webkit-linear-gradient( top, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;">
       </div>
       <div class="col-md-1 col-xs-1" style="height:50px;background: -webkit-radial-gradient(0% 0%, farthest-side, rgba(255,255,255,1), rgba(0,0,0,0) );margin-right:0px;"></div>
-      <div class="col-md-2 col-xs-0"></div>
+      <div class="col-md-2 col-xs-0 hidden-xs hidden-sm"></div>
     </div>
 
   <button onclick="topFunction()" id="topBtn" title="Go to top"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></button> 
@@ -136,7 +136,8 @@
 
       function adapt(){
         var h = $(window).height();
-        if(h>=550 && small){
+        var w = $(window).width();
+        if(h>=550 && w>=420 && small){
           $("#first-gradient").css({"margin-top":30});
           $("#first-gradient-r,#first-gradient-m,#first-gradient-l").css({"height":130});
           //$("#title").css({"font-size":"large"});
@@ -145,7 +146,7 @@
           p.replaceWith(a);
           small = false;
         }
-        if(h<550 && !small){
+        if((h<550||w<420) && !small){
           $("#first-gradient").css({"margin-top":10});
           $("#first-gradient-r,#first-gradient-m,#first-gradient-l").css({"height":80});
           //$("#title").css({"font-size":"large"});
@@ -157,7 +158,7 @@
         if(small){
           h = h-200;
         }else{
-          h = h-300;
+          h = h-290;
         }
         $("#publis-iframe").css({"height":h});
         $("#left-col").css({"height":h});
