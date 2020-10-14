@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="Renaud Vilmart's personal page">
+    <meta name="author" content="Renaud Vilmart">
+    <link rel="canonical" href="https://rvilmart.github.io/">
+    <link rel="icon" href="ressources/favicon.png" sizes="16x16 32x32" type="image/png">
+
+    <title>ZX Manipulation</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="main.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+      #graph {
+        width: 100%;
+        height: 100%;
+        /*border: 0px;/* solid lightgray;*/
+        /*box-shadow: 0px 0px 8px 8px #cccccc;*/
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <nav id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand hidden-sm" href="index.html">Renaud Vilmart</a>
+          <a class="navbar-brand visible-sm-inline" href="index.html">R. Vilmart</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="index.html"><span class="glyphicon glyphicon-tent" aria-hidden="true"></span> Home</a></li>
+            <li><a href="publis.html"><span class="glyphicon glyphicon-hdd" aria-hidden="true"></span> Publications</a></li>
+            <li><a href="https://vals.lri.fr/"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> Team <span style="font-size: 60%;" class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a></li>
+            <li><a href="contact.html"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Contact</a></li>
+            <li id="help"><a tabindex="0" role="button" data-container="body" data-toggle="popover" data-placement="bottom" data-trigger="focus" title="How to Use?" data-content="Here you can have a go at ZX-manipulations. Try double-clicking a node, or selecting several of them (by holding the ctrl key) to see if a ZX rule can be applied. Reload for a brand new randomly generated diagram."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div id="graph"></div> 
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/vis-network.min.js"></script>
+    <script type="text/javascript" src="js/vis-ZX.js"></script>
+  	<script type="text/javascript">
+      $(function () {
+        $('[data-toggle="popover"]').popover()
+      })
+      $("#graph").height($(document).height()-$("#navbar").height());
+  		var circ = randomCircuit(6,30,{"Z":1, "X":1, "H":1, "CX":1, "CZ":1},{"π/4":0.25, "π/2":1, "3π/4":0.25, "π":1, "5π/4":0.25, "3π/2":1, "7π/4":0.25});
+  		var nodes = circ[0];
+  		var edges = circ[1];
+  		initZX("graph",nodes, edges);
+  	</script>
+  </body>
+</html>

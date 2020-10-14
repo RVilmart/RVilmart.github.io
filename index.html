@@ -23,6 +23,14 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style type="text/css">
+      .graph {
+        width: 100%;
+        height: 480px;
+        /*border: 0px;/* solid lightgray;*/
+        /*box-shadow: 0px 0px 8px 8px #cccccc;*/
+      }
+    </style>
   </head>
 
   <body>
@@ -43,20 +51,12 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="index.html"><span class="glyphicon glyphicon-tent" aria-hidden="true"></span> Home</a></li>
             <li><a href="publis.html"><span class="glyphicon glyphicon-hdd" aria-hidden="true"></span> Publications</a></li>
-            <li><a href="https://vals.lri.fr/"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> Team</a></li>
+            <li><a href="https://vals.lri.fr/"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> Team <span style="font-size: 60%;" class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a></li>
             <li><a href="contact.html"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Contact</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-
-    <!--<div class="row" style="margin-top: 100px; margin-right: 20px; margin-left: 20px;">
-  		<div class="col-md-3"></div>
-  		<div class="col-md-6">
-  			<h1 style="color:red;">Site under construction.</h1>
-  		</div>
-  		<div class="col-md-3"></div>
-	</div>-->
 
     <div class="row" style="margin-top: 100px; margin-right: 20px; margin-left: 20px;">
   		<div class="col-md-2"></div>
@@ -74,7 +74,7 @@ My CV can be found <a href="ressources/CV.pdf">here</a>.
 	</div>
 
     <div class="row" style="margin-top: 120px; margin-right: 20px; margin-left: 20px;">
-  		<div class="col-md-3"><canvas id="graph1" width="450" height="480" /></div>
+  		<div class="col-md-3"><div id="graph1" class="graph" ></div></div>
   		<div class="col-md-6">
   			<h1>Research</h1>
         <p class="lead">
@@ -83,7 +83,7 @@ The ZX-Calculus comes equipped with a set of graphical transformations that are 
 You can find a list of my publications <a href="publis.html">here</a>. This <a href="https://hal.archives-ouvertes.fr/hal-01963426">one</a> got me the <a href="https://lics.siglog.org/archive/kleene-award.html">Kleene award</a> for best student paper at the conference LiCS (Logics in Computer Science).
         </p>
   		</div>
-  		<div class="col-md-3"><canvas id="graph2" width="450" height="480" /></div>
+  		<div class="col-md-3"><div id="graph2" class="graph" ></div></div>
 	</div>
 
     <div class="row" style="margin-top: 120px; margin-bottom: 120px; margin-right: 20px; margin-left: 20px;">
@@ -101,11 +101,12 @@ Rue Noetzlin, 91190 Gif-sur-Yvette
   		</div>
   		<div class="col-md-4"></div>
 	</div>
+	<div style="margin-top: 50px; width:100%;"><p style="text-align: center;"><a href="ZX-manip.html"><span class="glyphicon glyphicon-fullscreen" style="font-size: 200%;" aria-hidden="true"></span></a></p></div>
 
 	<button onclick="topFunction()" id="topBtn" title="Go to top"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></button> 
 
 	<div class="footer">
-	  <p>Website created by Renaud Vilmart / diagrams displayed using Springy v2.7.1 2010-2013 by Dennis Hotson </p>
+	  <p>Website created by Renaud Vilmart / diagrams displayed using vis-network (c) 2017-2019 visjs contributors, https://github.com/visjs </p>
 	</div>
 
 	<!--<div class="modal fade" tabindex="-1" role="dialog" id="myModal" aria-labelledby="myLargeModalLabel">
@@ -129,8 +130,40 @@ Rue Noetzlin, 91190 Gif-sur-Yvette
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script src="js/bootstrap.min.js"></script>
-	<script src="ressources/dhotson-springy-9654b64/springy.js"></script>
-	<script src="ressources/dhotson-springy-9654b64/springyui.js"></script>
+    <script type="text/javascript" src="js/vis-network.min.js"></script>
+    <script type="text/javascript" src="js/vis-ZX.js"></script>
+	<script type="text/javascript">
+		//Get the button:
+		mybutton = document.getElementById("topBtn");
+
+		// When the user scrolls down 20px from the top of the document, show the button
+		window.onscroll = function() {scrollFunction()};
+
+		function scrollFunction() {
+		  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+		    mybutton.style.display = "block";
+		  } else {
+		    mybutton.style.display = "none";
+		  }
+		}
+
+		// When the user clicks on the button, scroll to the top of the document
+		function topFunction() {
+		  $("html, body").animate({ scrollTop: "0" }); 
+		  /*document.body.scrollTop = 0; // For Safari
+		  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera*/
+		} 
+	</script>
+	<script type="text/javascript">
+		var circ = randomCircuit(2);
+		var nodes = circ[0];
+		var edges = circ[1];
+		initZX("graph1",nodes, edges, "fit");
+		var circ = randomCircuit(2);
+		var nodes = circ[0];
+		var edges = circ[1];
+		initZX("graph2",nodes, edges, "fit");
+	</script>
 	<!--<script type="text/javascript">
 		$('#myModal').modal();
 		$(".modal-header").on("mousedown", function(mousedownEvt) {
@@ -151,107 +184,5 @@ Rue Noetzlin, 91190 Gif-sur-Yvette
 		    });
 		});
 	</script>-->
-	<script>
-	//Get the button:
-	mybutton = document.getElementById("topBtn");
-
-	// When the user scrolls down 20px from the top of the document, show the button
-	window.onscroll = function() {scrollFunction()};
-
-	function scrollFunction() {
-	  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-	    mybutton.style.display = "block";
-	  } else {
-	    mybutton.style.display = "none";
-	  }
-	}
-
-	// When the user clicks on the button, scroll to the top of the document
-	function topFunction() {
-	  $("html, body").animate({ scrollTop: "0" }); 
-	  /*document.body.scrollTop = 0; // For Safari
-	  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera*/
-	} 
-
-	var graph = new Springy.Graph();
-
-	var b0 = graph.newNode({label:'', type:'b'});
-	var v0 = graph.newNode({label:'', type:'Z'});
-	var v1 = graph.newNode({label:'', type:'X'});
-	var v2 = graph.newNode({label:'π/4', type:'Z'});
-	var v3 = graph.newNode({label:'π/4', type:'Z'});
-	var v4 = graph.newNode({label:'', type:'X'});
-	var v5 = graph.newNode({label:'π/4', type:'Z'});
-	var v6 = graph.newNode({label:'-π/2', type:'Z'});
-	var v7 = graph.newNode({label:'', type:'X'});
-	var v8 = graph.newNode({label:'π/4', type:'Z'});
-	var v9 = graph.newNode({label:'', type:'Z'});
-	var v10 = graph.newNode({label:'', type:'X'});
-	var v11 = graph.newNode({label:'π/4', type:'Z'});
-	var v12 = graph.newNode({label:'π/4', type:'Z'});
-	var b1 = graph.newNode({label:'', type:'b'});
-
-	graph.newEdge(b0,v0);
-	graph.newEdge(v0,v1);
-	graph.newEdge(v2,v1);
-	graph.newEdge(v3,v1);
-	graph.newEdge(v0,v4);
-	graph.newEdge(v5,v4);
-	graph.newEdge(v6,v4);
-	graph.newEdge(v6,v7);
-	graph.newEdge(v8,v7);
-	graph.newEdge(v9,v7);
-	graph.newEdge(v9,v10);
-	graph.newEdge(v11,v10);
-	graph.newEdge(v12,v10);
-	graph.newEdge(v9,b1);
-
-	var graph2 = new Springy.Graph();
-
-	var b02 = graph2.newNode({label:'', type:'b'});
-	var v02 = graph2.newNode({label:'', type:'Z'});
-	var v12 = graph2.newNode({label:'π', type:'X'});
-	var v22 = graph2.newNode({label:'π/4', type:'Z'});
-	var v32 = graph2.newNode({label:'π/4', type:'Z'});
-	var v42 = graph2.newNode({label:'π', type:'X'});
-	var v52 = graph2.newNode({label:'π/4', type:'Z'});
-	var v62 = graph2.newNode({label:'π/4', type:'Z'});
-	var v72 = graph2.newNode({label:'π/2', type:'X'});
-	var b12 = graph2.newNode({label:'', type:'b'});
-
-	graph2.newEdge(b02,v02);
-	graph2.newEdge(v02,v12);
-	graph2.newEdge(v22,v12);
-	graph2.newEdge(v32,v12);
-	graph2.newEdge(v02,v42);
-	graph2.newEdge(v52,v42);
-	graph2.newEdge(v62,v42);
-	graph2.newEdge(v62,v72);
-	graph2.newEdge(v72,b12);
-
-	jQuery(function(){
-	  $('#graph1').width($('.col-md-3').width());
-	  $('#graph2').width($('.col-md-3').width());
-
-	  var springy = window.springy = jQuery('#graph1').springy({
-	    graph: graph,
-	    nodeSelected: function(node){
-	      console.log('Node selected: ' + JSON.stringify(node.data));
-	    }
-	  });
-	  var springy = window.springy = jQuery('#graph2').springy({
-	    graph: graph2,
-	    nodeSelected: function(node){
-	      console.log('Node selected: ' + JSON.stringify(node.data));
-	    }
-	  });
-	});
-
-	$(window).resize(function(){
-	  $('#graph1').width($('.col-md-3').width());
-	  $('#graph2').width($('.col-md-3').width());
-	});
-
-	</script>
   </body>
 </html>
