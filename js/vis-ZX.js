@@ -21,12 +21,14 @@ function getKeyFromProb(specs, p){
   return specs[i][0];
 }
 
-function randomCircuit(q, N, gate_specs, angle_specs){
+function randomCircuit(q, N, gate_specs, angle_specs, anc, disc){
   // q is the number of qubits
   // N is the number of gates
   // specs is a dictionary of the form {"gate":<frequency>}
   // angles is a dictionary of the form {"angle":<frequency>}
   // the frequencies do not need to add up to 1, they are renormalised
+  // anc is a range giving the number of ancillae, initialised at |0>
+  // disc is a range giving the number of discards
   var fresh_node_id = 0;
   if (gate_specs===undefined){
     gate_specs = {"Z":1, "X":1, "H":1, "CX":1, "CZ":1};
@@ -39,14 +41,26 @@ function randomCircuit(q, N, gate_specs, angle_specs){
   if (N===undefined){
     N = 5*q;
   }
+  if (anc === undefined){ anc = [0,0];}
+  if (typeof anc === "number"){ anc = [anc,anc];}
+  nb_anc = anc[0]+Math.floor((anc[1]-anc[0]+1)*Math.random());
+  if (disc === undefined){ disc = [0,0]; }
+  if (typeof disc === "number"){ disc = [disc,disc];}
+  nb_disc = disc[0]+Math.floor((disc[1]-disc[0]+1)*Math.random());
   var nodes = [];
   var layer = [];
   var edges = [];
   for (var i=0; i<q; i++){
     layer.push(fresh_node_id);
-    nodes.push({ id: fresh_node_id, label: "", group: "b" });
+    nodes.push({ id: fresh_node_id, label: "i"+i, group: "b" });
     fresh_node_id++;
   }
+  for (var i=0; i<nb_anc; i++){
+    layer.push(fresh_node_id);
+    nodes.push({ id: fresh_node_id, label: "", group: "X" });
+    fresh_node_id++;
+  }
+  q = q+nb_anc;
   for (var i=0; i<N; i++){
     var gate = getKeyFromProb(gates, Math.random());
     var q0 = Math.floor(q*Math.random());
@@ -105,8 +119,13 @@ function randomCircuit(q, N, gate_specs, angle_specs){
         break;
     }
   }
-  for (var i=0; i<q; i++){
-    nodes.push({ id: fresh_node_id, label: "", group: "b" });
+  for (var i=0; i<nb_disc; i++){
+    nodes.push({ id: fresh_node_id, label: "", group: "bang" });
+    edges.push({ from:layer[i], to:fresh_node_id});//, arrows: {to:{enabled: true, type: "image", src:"ressources/discard.svg"}}});
+    fresh_node_id++;
+  }
+  for (var i=nb_disc; i<q; i++){
+    nodes.push({ id: fresh_node_id, label: "o"+(i-nb_disc), group: "b" });
     edges.push({ from:layer[i], to:fresh_node_id});
     fresh_node_id++;
   }
@@ -122,6 +141,73 @@ function initZX(div_id, nodes, edges, method){
   // nodes is an array of dictionaries in the form { id:<id>, label:<label>, group:<group> }
   // edges is an array of dictionaries in the form { from:<node_id>, to:<node_id> }
 
+  $("body").append(
+  `<div class="modal fade" tabindex="-1" role="dialog" id="EdgeDbClickModal`+div_id+`" aria-labelledby="ModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="cursor:move;">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title noselect">Choose an action</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4"><button type="button" id="HButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal">&ensp;<img src="ressources/H-2.png">&ensp;</button></div>
+            <div class="col-md-4"><button type="button" id="ZButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal">&ensp;<img src="ressources/gn.png">&ensp;</button></div>
+            <div class="col-md-4"><button type="button" id="XButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal">&ensp;<img src="ressources/rn.png">&ensp;</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`)
+
+  $("body").append(
+  `<div class="modal fade" tabindex="-1" role="dialog" id="SimpModal`+div_id+`" aria-labelledby="ModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="cursor:move;">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title noselect">Choose an action</h4>
+        </div>
+        <div class="modal-body">
+          <button type="button" id="SpiderButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal" >All Spiders</button><br>
+          <button type="button" id="SpiderHButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal">All Spiders ++</button><br>
+          <button type="button" id="HopfButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal">All Hopf</button><br>
+          <button type="button" id="HInvolutionButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal">All H Involutions</button><br>
+          <button type="button" id="CopyButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal">All Copies</button><br>
+          <button type="button" id="AllSimpsButton`+div_id+`" class="btn btn-default" autocomplete="off" data-dismiss="modal">All Obvious Simplifications</button>
+        </div>
+      </div>
+    </div>
+  </div>`)
+
+  $(".modal-header").on("mousedown", function(mousedownEvt) {
+      var $draggable = $(this);
+      var x = mousedownEvt.pageX - $draggable.offset().left,
+          y = mousedownEvt.pageY - $draggable.offset().top;
+      $("body").on("mousemove.draggable", function(mousemoveEvt) {
+          $draggable.closest(".modal-dialog").offset({
+              "left": mousemoveEvt.pageX - x,
+              "top": mousemoveEvt.pageY - y
+          });
+      });
+      $("body").one("mouseup", function() {
+          $("body").off("mousemove.draggable");
+      });
+      $draggable.closest(".modal").one("bs.modal.hide", function() {
+          $("body").off("mousemove.draggable");
+      });
+  });
+
+  $('#'+div_id).keypress(function(event) {
+    var keyCode = event.which;
+    if (keyCode===115){
+      $('#SimpModal'+div_id).modal();
+    }
+  });
+
+  var EdgeDbClick = undefined;
+  var EdgeDbClickConnectedNodes = undefined;
+
   var data = {
     nodes: nodes,
     edges: edges
@@ -131,6 +217,17 @@ function initZX(div_id, nodes, edges, method){
   function addNode(gp, l, x, y) {
     nodes.add({ id: fresh_node_id, label: l, group: gp, x: x, y: y });
     fresh_node_id++;
+  }
+
+  function addBangs(node_ids, x, y) {
+    // Creates discards and link it to node_ids
+    // node_ids can be either a list or a single node id
+    if (typeof node_ids ==="number") {node_ids = [ node_ids ]}
+    for (node_id of node_ids){
+      nodes.add({ id: fresh_node_id, label: "", group: "bang", x: x, y: y });
+      fresh_node_id++;
+      edges.add({from:node_id, to:fresh_node_id-1, arrows: {to:{enabled: true, type: "image", src:"ressources/discard.svg"}}});
+    }
   }
 
   function removeNode(node_id){
@@ -284,23 +381,24 @@ function initZX(div_id, nodes, edges, method){
     var neighbours = getConnectedNodesMult(node1.id);
     var ind1 = fresh_node_id;
     addNode({"Z":"X", "X":"Z"}[node1.group], node1.label, pos.x, pos.y);
-    for (node of neighbours){
-      if (node!==node2.id){
-        getNodeById(node);
-        var node_neighbours = network.getConnectedNodes(node.id);
-        if (node_neighbours.length===1 && node.group==="H"){
+    for (current_node of neighbours){
+      if (current_node!==node2.id){
+        //current_node = getNodeById(current_node);
+        current_node = nodes.get(current_node);
+        var node_neighbours = network.getConnectedNodes(current_node.id);
+        if (node_neighbours.length===1 && current_node.group==="H"){
           // H-loop, do nothing
-          edges.add({ from: node.id, to: ind1});
-          edges.add({ from: ind1, to: node.id});
-        }else if(node.group==="H"){
+          edges.add({ from: current_node.id, to: ind1});
+          edges.add({ from: ind1, to: current_node.id});
+        }else if(current_node.group==="H"){
           // H-involution
-          var neigh_neigh = (network.getConnectedNodes(node.id)).filter(node_id => node_id!==node1.id)[0];
+          var neigh_neigh = (network.getConnectedNodes(current_node.id)).filter(node_id => node_id!==node1.id)[0];
           edges.add({ from: ind1, to:neigh_neigh});
-          removeNode(node.id);
+          removeNode(current_node.id);
         }else{
-          var pos_aux = network.getPosition(node.id);
+          var pos_aux = network.getPosition(current_node.id);
           addNode("H", "",  (pos.x+pos_aux.x)/2, (pos.y+pos_aux.y)/2);
-          edges.add({ from: node.id, to: fresh_node_id-1});
+          edges.add({ from: current_node.id, to: fresh_node_id-1});
           edges.add({ from: ind1, to: fresh_node_id-1});
         }
       }
@@ -318,22 +416,23 @@ function initZX(div_id, nodes, edges, method){
     var ind1 = fresh_node_id;
     addNode(node1.group, minusLabel(node1.label), pos.x, pos.y);
 
-    for (node of neighbours){
-      if (node!==node2.id){
-        getNodeById(node);
-        var node_neighbours = network.getConnectedNodes(node.id);
-        if (node_neighbours.length===1 && node.label==="π"){
+    for (current_node of neighbours){
+      if (current_node!==node2.id){
+        //current_node = getNodeById(current_node);
+        current_node = nodes.get(current_node);
+        var node_neighbours = network.getConnectedNodes(current_node.id);
+        if (node_neighbours.length===1 && current_node.label==="π"){
           // π-loop, do nothing
-          edges.add({ from: node.id, to: ind1});
-          edges.add({ from: ind1, to: node.id});
+          edges.add({ from: current_node.id, to: ind1});
+          edges.add({ from: ind1, to: current_node.id});
         /*}else if(node.label==="π" && node.group===node2.group){
           // π-involution
           nodes.update([{ id: node.id, label: "" }]);
           edges.add({ from: ind1, to:node.id});*/
         }else{
-          var pos_aux = network.getPosition(node.id);
+          var pos_aux = network.getPosition(current_node.id);
           addNode(node2.group, "π",  (pos.x+pos_aux.x)/2, (pos.y+pos_aux.y)/2);
-          edges.add({ from: node.id, to: fresh_node_id-1});
+          edges.add({ from: current_node.id, to: fresh_node_id-1});
           edges.add({ from: ind1, to: fresh_node_id-1});
         }
       }
@@ -343,10 +442,92 @@ function initZX(div_id, nodes, edges, method){
     removeNode(node2.id);
   }
 
+  function bangEatsU(node1, node2) {
+    // node1 is a bang, node2 is a 1-qbit unitary
+    var neighbour = (network.getConnectedNodes(node2.id)).filter(node_id => node_id!==node1.id)[0];
+    removeNode(node2.id);
+    edges.add({from:neighbour, to:node1.id});
+  }
+
+  function bangEatsU2(node1, node2) {
+    // node1 and node2 are bangs
+    //var neighbour1 = getNodeById(network.getConnectedNodes(node1.id)[0]);
+    //var neighbour2 = getNodeById(network.getConnectedNodes(node2.id)[0]);
+    var neighbour1 = nodes.get(network.getConnectedNodes(node1.id)[0]);
+    var neighbour2 = nodes.get(network.getConnectedNodes(node2.id)[0]);
+    var n1_neighbours = (network.getConnectedNodes(neighbour1.id)).filter(node_id => node_id!==node1.id);
+    var n2_neighbours = (network.getConnectedNodes(neighbour2.id)).filter(node_id => node_id!==node2.id);
+    var common_edges = (network.getConnectedEdges(neighbour1.id)).filter(edge_id => (network.getConnectedEdges(neighbour2.id)).includes(edge_id));
+    if (["XZ","ZX"].includes(neighbour1.group+neighbour2.group) && common_edges.length!==0){
+      // CNot
+      for (edge of common_edges){
+        edges.remove({id: edge});
+      }
+      applyBangRules(node1,neighbour1);
+      applyBangRules(node2,neighbour2);
+      return;
+    }
+    var common_Us = (n1_neighbours.filter(node_id => n2_neighbours.includes(node_id)));
+    //common_Us = common_Us.map(getNodeById);
+    common_Us = common_Us.map(node_id => nodes.get(node_id));
+    common_Us = common_Us.filter(node => node.group==="H" || ["π/2","3π/2"].includes(node.label));
+    common_Us = common_Us.filter(node => network.getConnectedEdges(node.id).length===2);
+    if (["XX","ZZ"].includes(neighbour1.group+neighbour2.group) && common_Us.length!==0){
+      // CZ or similar
+      for (node of common_Us){
+        removeNode(node.id);
+      }
+      applyBangRules(node1,neighbour1);
+      applyBangRules(node2,neighbour2);
+      return;
+    }
+    // We create a CNot controlled by the edge of node1
+    edges.remove({id: network.getConnectedEdges(node1.id)[0]});
+    edges.remove({id: network.getConnectedEdges(node2.id)[0]});
+    var pos1 = network.getPosition(node1.id);
+    var pos_n1 = network.getPosition(neighbour1.id);
+    var pos2 = network.getPosition(node2.id);
+    var pos_n2 = network.getPosition(neighbour2.id);
+    addNode("Z", "", (pos1.x+pos_n1.x)/2, (pos1.y+pos_n1.y)/2);
+    edges.add({from:node1.id, to:fresh_node_id-1});
+    edges.add({from:neighbour1.id, to:fresh_node_id-1});
+    addNode("H", "", (pos1.x+pos_n1.x+pos2.x+pos_n2.x)/4, (pos1.y+pos_n1.y+pos2.y+pos_n2.y)/4);
+    edges.add({from:fresh_node_id-2, to:fresh_node_id-1});
+    addNode("Z", "", (pos2.x+pos_n2.x)/2, (pos2.y+pos_n2.y)/2);
+    edges.add({from:node2.id, to:fresh_node_id-1});
+    edges.add({from:neighbour2.id, to:fresh_node_id-1});
+    edges.add({from:fresh_node_id-2, to:fresh_node_id-1});
+  }
+
+  function applyBangRules(node1, node2){
+    // one of the 2 nodes is a bang
+    if (node1.group!=="bang"){ return applyBangRules(node2, node1); }
+    // node1 is now a bang
+    var neighbours = network.getConnectedNodes(node2.id);
+    if (neighbours.length===2){
+      bangEatsU(node1, node2);
+      return ;
+    }
+    if (neighbours.length===1){
+      // case of a scalar
+      removeNode(node1.id);
+      removeNode(node2.id);
+      return ;
+    }
+    if (["X","Z"].includes(node2.group)){
+      nodes.update([{ id: node2.id, label: "" }]);
+      var pos = network.getPosition(node2.id);
+      network.moveNode(node2.id,pos.x,pos.y);
+      return ;
+    }
+  }
+
   function applyZXRule(nodes_id) {
     if (nodes_id.length!==2){return ;}
-    var node1 = getNodeById(nodes_id[0]);
-    var node2 = getNodeById(nodes_id[1]);
+    //var node1 = getNodeById(nodes_id[0]);
+    //var node2 = getNodeById(nodes_id[1]);
+    var node1 = nodes.get(nodes_id[0]);
+    var node2 = nodes.get(nodes_id[1]);
     if (node1.group==="b" || node2.group==="b"){network.unselectAll(); return ;}
     if (network.getConnectedNodes(node1.id).includes(node2.id)){
       // the two nodes are adjacent
@@ -421,6 +602,17 @@ function initZX(div_id, nodes, edges, method){
         network.unselectAll();
         return ;
       }
+      if ([node1.group, node2.group].includes("bang")){
+        applyBangRules(node1,node2);
+        network.unselectAll();
+        return;
+      }
+    }
+    if (node1.group==="bang" && node2.group==="bang"){
+      // CNot
+      bangEatsU2(node1,node2);
+      network.unselectAll();
+      return;
     }
   }
 
@@ -470,9 +662,55 @@ function initZX(div_id, nodes, edges, method){
     removeNode(node.id);
   }
 
-  function applyDbClickZXRule(nodes_id){
+  function applyDbClickZXRule(params){
+    if (params.nodes.length > 0){ applyDbClickZXRuleNode(params.nodes);}
+    else if (params.edges.length > 0){ applyDbClickZXRuleEdge(params.edges);}
+    network.unselectAll();
+    return ;
+  }
+
+  $('#HButton'+div_id).on('click', function(){
+    var neighbours = network.getConnectedNodes(EdgeDbClick);
+    edges.remove({id: EdgeDbClick});
+    var pos1 = network.getPosition(neighbours[0]);
+    var pos2 = network.getPosition(neighbours[1]);
+    addNode("H", "", (2*pos1.x+pos2.x)/3, (2*pos1.y+pos2.y)/3);
+    edges.add({ from: neighbours[0], to:fresh_node_id-1});
+    addNode("H", "", (pos1.x+2*pos2.x)/3, (pos1.y+2*pos2.y)/3);
+    edges.add({ from: fresh_node_id-2, to:fresh_node_id-1});
+    edges.add({ from: neighbours[1], to:fresh_node_id-1});
+  });
+
+  $('#ZButton'+div_id).on('click', function(){
+    var neighbours = network.getConnectedNodes(EdgeDbClick);
+    edges.remove({id: EdgeDbClick});
+    var pos1 = network.getPosition(neighbours[0]);
+    var pos2 = network.getPosition(neighbours[1]);
+    addNode("Z", "", (pos1.x+pos2.x)/2, (pos1.y+pos2.y)/2);
+    edges.add({ from: neighbours[0], to:fresh_node_id-1});
+    edges.add({ from: neighbours[1], to:fresh_node_id-1});
+  });
+
+  $('#XButton'+div_id).on('click', function(){
+    var neighbours = network.getConnectedNodes(EdgeDbClick);
+    edges.remove({id: EdgeDbClick});
+    var pos1 = network.getPosition(neighbours[0]);
+    var pos2 = network.getPosition(neighbours[1]);
+    addNode("X", "", (pos1.x+pos2.x)/2, (pos1.y+pos2.y)/2);
+    edges.add({ from: neighbours[0], to:fresh_node_id-1});
+    edges.add({ from: neighbours[1], to:fresh_node_id-1});
+  });
+
+  function applyDbClickZXRuleEdge(edges){
+    if (edges.length!==1){return ;}
+    EdgeDbClick = edges[0];
+    $('#EdgeDbClickModal'+div_id).modal();
+  }
+
+  function applyDbClickZXRuleNode(nodes_id){
     if (nodes_id.length!==1){return ;}
-    var node = getNodeById(nodes_id[0]);
+    //var node = getNodeById(nodes_id[0]);
+    var node = nodes.get(nodes_id[0]);
     var edges_node = network.getConnectedEdges(node.id);
     if (edges_node.length === 2 && ["Z","X"].includes(node.group) && node.label===""){
       // apply I
@@ -493,6 +731,182 @@ function initZX(div_id, nodes, edges, method){
       return ;
     }
   }
+
+  function SpiderAll(){
+    for (current_node of nodes.get()){
+      if (["Z","X"].includes(current_node.group)){
+        if (current_node.label==="" && network.getConnectedEdges(current_node.id).length===2){
+          applyZXI(current_node);
+          setTimeout(() => { SpiderAll(); }, 1);
+          return true;
+        }
+        var same_type_neighbours = network.getConnectedNodes(current_node.id);
+        //same_type_neighbours = same_type_neighbours.map(getNodeById);
+        same_type_neighbours = same_type_neighbours.map(node_id => nodes.get(node_id));
+        same_type_neighbours = same_type_neighbours.filter(n => n.group===current_node.group);
+        if (same_type_neighbours.length!==0){
+          merge(current_node, same_type_neighbours[0]);
+          setTimeout(() => { SpiderAll(); }, 1);
+          return true;
+        }
+      }
+    }
+    return false
+  }
+
+  $('#SpiderButton'+div_id).on('click', function(){
+    $('#SimpModal'+div_id).modal('hide');
+    SpiderAll();
+  });
+
+  function SpiderAllH(b) {
+    if (b===undefined) { b = false; }
+    for (current_node of nodes.get()){
+      if (["Z","X"].includes(current_node.group)){
+        var same_type_neighbours = network.getConnectedNodes(current_node.id);
+        //same_type_neighbours = same_type_neighbours.map(getNodeById);
+        same_type_neighbours = same_type_neighbours.map(node_id => nodes.get(node_id));
+        same_type_neighbours = same_type_neighbours.filter(n => n.group==="H");
+        //same_type_neighbours = same_type_neighbours.map(n => [n,getNodeById(network.getConnectedNodes(n.id).filter(id => id!==current_node.id)[0])]);
+        same_type_neighbours = same_type_neighbours.map(n => [n,nodes.get(network.getConnectedNodes(n.id).filter(id => id!==current_node.id)[0])]);
+        same_type_neighbours = same_type_neighbours.filter(t => t[1].group==={"X":"Z", "Z":"X"}[current_node.group]);
+        if (same_type_neighbours.length!==0){
+          applyColourChange(same_type_neighbours[0][1],same_type_neighbours[0][0]);
+          setTimeout(() => { SpiderAll(); }, 1);
+          setTimeout(() => { SpiderAllH(true); }, 1);
+          return true;
+        }
+      }
+    }
+    return SpiderAll();  
+  }
+
+  $('#SpiderHButton'+div_id).on('click', function(){
+    $('#SimpModal'+div_id).modal('hide');
+    SpiderAll();
+    SpiderAllH();
+  });
+
+  function HopfAll(b) {
+    if (b===undefined){ b = false; }
+    for (current_node of nodes.get()){
+      if (["Z","X"].includes(current_node.group)){
+        var neighbours = network.getConnectedNodes(current_node.id);
+        var current_edges = network.getConnectedEdges(current_node.id);
+        var Hneighbours = [];
+        for (neighbour of neighbours){
+          neighbour = nodes.get(neighbour);
+          if (neighbour.group==={"X":"Z", "Z":"X"}[current_node.group]){
+            var common_edges = network.getConnectedEdges(neighbour.id).filter(edge_id => current_edges.includes(edge_id));
+            if (common_edges.length>=2){
+              //Apply Hopf
+              edges.remove({id:common_edges[0]});
+              edges.remove({id:common_edges[1]});
+              setTimeout(() => { HopfAll(true); }, 1);
+              return true;
+            }
+          }
+          if (neighbour.group==="H"){
+            var hneighbour = nodes.get(network.getConnectedNodes(neighbour.id).filter(node_id => node_id!==current_node.id)[0]);
+            if (hneighbour.group===current_node.group){
+              var common_Hs = network.getConnectedNodes(hneighbour.id).filter(node_id => neighbours.includes(node_id));
+              common_Hs = common_Hs.map(node_id => nodes.get(node_id)).filter(n => n.group==="H");
+              if (common_Hs.length>=2){
+                removeNode(common_Hs[0].id);
+                removeNode(common_Hs[1].id);
+                setTimeout(() => { HopfAll(true); }, 1);
+                return true;
+              }
+            }
+          }
+        }
+      }
+    } 
+    return b;
+  }
+
+  $('#HopfButton'+div_id).on('click', function(){
+    $('#SimpModal'+div_id).modal('hide');
+    return HopfAll();
+  });
+
+  function HInvAll(b) {
+    if (b===undefined){ b = false; }
+    for (current_node of nodes.get()){
+      if (current_node.group==="H"){
+        var neighbours = network.getConnectedNodes(current_node.id);
+        for (neighbour of neighbours){
+          neighbour = nodes.get(neighbour);
+          if (neighbour.group==="H"){
+            applyHInvolution(current_node, neighbour);
+            setTimeout(() => { HInvAll(true); }, 1);
+            return true;
+          }
+        }
+      }
+    }
+    return b;
+  }
+
+  $('#HInvolutionButton'+div_id).on('click', function(){
+    $('#SimpModal'+div_id).modal('hide');
+    return HInvAll();
+  });
+
+  function CopyAll(b) {
+    if (b===undefined){ b = false; }
+    for (current_node of nodes.get()){
+      if (network.getConnectedEdges(current_node.id).length===1 && ["Z","X"].includes(current_node.group)){
+        var neighbour = nodes.get(network.getConnectedNodes(current_node.id)[0]);
+        if (neighbour.group==="H"){
+          applyColourChange(current_node, neighbour);
+          setTimeout(() => { CopyAll(true); }, 1);
+          return true;
+        }
+        if (neighbour.group==={"X":"Z", "Z":"X"}[current_node.group]){
+          if (["π/2", "3π/2"].includes(current_node.label)){
+            applyHRecomp(current_node);
+            setTimeout(() => { CopyAll(true); }, 1);
+            return true;
+          }
+          if (["", "π"].includes(current_node.label)){
+            applyZXCopy(current_node,neighbour);
+            setTimeout(() => { CopyAll(true); }, 1);
+            return true;
+          }
+        }
+      }
+    }
+    return b;
+  }
+
+  $('#CopyButton'+div_id).on('click', function(){
+    $('#SimpModal'+div_id).modal('hide');
+    return CopyAll();
+  });
+
+  var lock = false;
+
+  const AllSimps = async() => {
+    if (lock){
+      setTimeout(() => { AllSimps(); }, 200);
+      return;
+    }
+    lock = true;
+    setTimeout(() => { SpiderAllH(); }, 1);
+    var b = await HInvAll();
+    if (b) { lock = false; await AllSimps(); return ;}
+    b = await HopfAll();
+    if (b) { lock = false; await AllSimps(); return ;}
+    b = await CopyAll();
+    if (b) { lock = false; await AllSimps(); return ;}
+    lock = false;
+  }
+
+  $('#AllSimpsButton'+div_id).on('click', function(){
+    $('#SimpModal'+div_id).modal('hide');
+    return AllSimps();
+  });
 
   // Predefined vis-network options for ZX-diagrams
   var options = {
@@ -536,11 +950,27 @@ function initZX(div_id, nodes, edges, method){
             },
           },
         },
-        b: {
+        /*b: {
           shape: "circle",
           color: "black",
           margin: 0.1,
+        },*/
+        b: {
+          shape:"image",
+          size:5,
+          image:"ressources/boundary.svg",
+          //fixed:{y:true},
         },
+        bang: {
+          shape:"image",
+          size:15,
+          image:{ selected:"ressources/discard-circle-2-selected.svg", unselected:"ressources/discard-circle-2.svg"},
+        },
+        /*bang: {
+          shape: "circle",
+          color: "white",
+          margin: 0.1,
+        },*/
       },
       interaction: {
         dragView: false,
@@ -552,6 +982,10 @@ function initZX(div_id, nodes, edges, method){
   var container = document.getElementById(div_id);
   var network = new vis.Network(container, data, options);
 
+  network.stopSimulation();
+  /*network.redraw();
+  network.startSimulation();*/
+
   if (method==="fit"){
     window.onresize = function() {network.fit();};
     //network.on("release", function () { network.fit({animation: {duration: 500}}); });
@@ -559,5 +993,8 @@ function initZX(div_id, nodes, edges, method){
   }
 
   network.on("selectNode", function(params) { applyZXRule(params.nodes); });
-  network.on("doubleClick", function(params) { applyDbClickZXRule(params.nodes); });
+  network.on("doubleClick", function(params) { applyDbClickZXRule(params); });
+
+  var pos = network.getPosition(0);
+  network.moveNode(0,pos.x,pos.y);
 }

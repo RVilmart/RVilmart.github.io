@@ -51,7 +51,7 @@
           <ul class="nav navbar-nav">
             <li><a href="index.html"><span class="glyphicon glyphicon-tent" aria-hidden="true"></span> Home</a></li>
             <li><a href="publis.html"><span class="glyphicon glyphicon-hdd" aria-hidden="true"></span> Publications</a></li>
-            <li><a href="https://vals.lri.fr/"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> Team <span style="font-size: 60%;" class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a></li>
+            <li><a href="https://deducteam.gitlabpages.inria.fr/" target="_blank"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span> Team <span style="font-size: 60%;" class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a></li>
             <li><a href="contact.html"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Contact</a></li>
             <li id="help"><a tabindex="0" role="button" data-container="body" data-toggle="popover" data-placement="bottom" data-trigger="focus" title="How to Use?" data-content="Here you can have a go at ZX-manipulations. Try double-clicking a node, or selecting several of them (by holding the ctrl key) to see if a ZX rule can be applied. Reload for a brand new randomly generated diagram."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></a></li>
           </ul>
@@ -75,10 +75,16 @@
         $('[data-toggle="popover"]').popover()
       })
       $("#graph").height($(document).height()-$("#navbar").height());
-  		var circ = randomCircuit(6,30,{"Z":1, "X":1, "H":1, "CX":1, "CZ":1},{"π/4":0.25, "π/2":1, "3π/4":0.25, "π":1, "5π/4":0.25, "3π/2":1, "7π/4":0.25});
+  		var circ = randomCircuit(6,60,{"Z":1, "X":1, "H":1, "CX":1, "CZ":1},{"π/4":0.25, "π/2":1, "3π/4":0.25, "π":1, "5π/4":0.25, "3π/2":1, "7π/4":0.25},5,5);
   		var nodes = circ[0];
   		var edges = circ[1];
   		initZX("graph",nodes, edges);
+      //edges.add({from:0, to:1, arrows: {to:{enabled: true, type: "image", src:"ressources/discard.svg"}}});
+      /*nodes.add({ id: 5000, label: "", shape: "icon", icon:{code: "\u9191"}});
+      nodes.add({ id: 5001, label: "", shape:"image", size:15, image: "ressources/discard-circle-2.svg" });
+      nodes.add({ id: 5002, label:"", margin:0});
+      edges.add({from:5000, to:5001});
+      edges.add({from:5001, to:5002});*/
   	</script>
   </body>
 </html>
