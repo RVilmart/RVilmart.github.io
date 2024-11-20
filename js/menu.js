@@ -20,6 +20,7 @@ $("body").append(
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> Teaching <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="ArteQ.html"> ARTeQ - EITQ </a></li>
+                <li><a href="QDCS.html"> QDCS </a></li>
               </ul>
             </li>
             <li class="dropdown">
